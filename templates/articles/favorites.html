@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+
+{% block title %}Seçilmişlər - TechNews{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>Seçilmişlər</h1>
+
+    <p>
+        Yadda saxladığın məqalələr
+    </p>
+
+</div>
+
+
+<div class="articles-grid">
+
+    {% for article in articles %}
+
+        <article class="article-card">
+
+            {% if article.image %}
+
+                <div class="article-image">
+
+                    <img
+                        src="{{ article.image.url }}"
+                        alt="{{ article.title }}"
+                    >
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="article-card-content">
+
+                <span class="article-category">
+                    {{ article.category.name }}
+                </span>
+
+
+                <h2>
+                    {{ article.title }}
+                </h2>
+
+
+                <p>
+                    {{ article.content|truncatewords:30 }}
+                </p>
+
+
+                <div class="article-info">
+
+                    <span>
+                        Müəllif: {{ article.author.username }}
+                    </span>
+
+                    <span>
+                        {{ article.created_at|date:"d.m.Y H:i" }}
+                    </span>
+
+                </div>
+
+
+                <!-- LIKE / DISLIKE / RATING / FAVORITE -->
+                <div class="article-actions">
+
+
+                    <!-- LIKE / DISLIKE -->
+                    <div class="reaction-group">
+
+                        <form method="post"
+                              action="{% url 'article_like' article.id %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="reaction-btn like-btn">
+
+                                👍 Bəyən
+
+                                <span class="reaction-count">
+                                    {{ article.like_count }}
+                                </span>
+
+                            </button>
+
+                        </form>
+
+
+                        <form method="post"
+                              action="{% url 'article_dislike' article.id %}">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="reaction-btn dislike-btn">
+
+                                👎 Bəyənmə
+
+                                <span class="reaction-count">
+                                    {{ article.dislike_count }}
+                                </span>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="article-extra">
+
+
+                        <!-- RATING -->
+                        <form method="post"
+                              action="{% url 'article_rating' article.id %}">
+
+                            {% csrf_token %}
+
+                            <select name="rating"
+                                    class="rating-select">
+
+                                <option value="">
+                                    Qiymətləndir
+                                </option>
+
+                                <option value="1">★ 1</option>
+                                <option value="2">★ 2</option>
+                                <option value="3">★ 3</option>
+                                <option value="4">★ 4</option>
+                                <option value="5">★ 5</option>
+
+                            </select>
+
+                            <button type="submit"
+                                    class="rating-button">
+
+                                Göndər
+
+                            </button>
+
+                        </form>
+
+
+                        <!-- ORTALAMA RATING -->
+                        <div class="rating-box">
+
+                            <span class="rating-star">
+                                ★
+                            </span>
+
+                            <span class="rating-value">
+
+                                {% if article.average_rating %}
+
+                                    {{ article.average_rating|floatformat:1 }}
+
+                                {% else %}
+
+                                    0.0
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- FAVORITE -->
+                        <form method="post"
+                              action="{% url 'article_favorite' article.id %}">
+
+                            {% csrf_token %}
+
+                            {% if article.id in favorite_article_ids %}
+
+                                <button type="submit"
+                                        class="favorite-btn favorite-active">
+
+                                    ♥ Yadda saxlanılıb
+
+                                </button>
+
+                            {% else %}
+
+                                <button type="submit"
+                                        class="favorite-btn">
+
+                                    ♡ Yadda saxla
+
+                                </button>
+
+                            {% endif %}
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+              <!-- REDAKTƏ / SİL -->
+
+{% if user.is_authenticated %}
+
+    <!-- ADMIN / SUPER ADMIN -->
+    {% if user.is_superuser or user.profile.role == 'admin' %}
+
+        <div class="article-admin-actions">
+
+            <a href="{% url 'article_edit' article.id %}"
+               class="admin-edit-button">
+                Redaktə et
+            </a>
+
+            <a href="{% url 'article_delete' article.id %}"
+               class="admin-delete-button">
+                Sil
+            </a>
+
+        </div>
+
+    <!-- MƏQALƏNİN SAHİBİ -->
+    {% elif user == article.author %}
+
+        <div class="article-owner-actions">
+
+            <a href="{% url 'article_edit' article.id %}"
+               class="owner-edit-btn">
+                ✎ Redaktə et
+            </a>
+
+            <a href="{% url 'article_delete' article.id %}"
+               class="owner-delete-btn">
+                Sil
+            </a>
+
+        </div>
+
+    {% endif %}
+
+{% endif %}
+
+            </div>
+
+        </article>
+
+
+    {% empty %}
+
+        <div class="empty-state">
+
+            <h2>Hələ seçilmiş məqalə yoxdur</h2>
+
+            <p>
+                Bəyəndiyin məqalələri seçilmişlərə əlavə edə bilərsən.
+            </p>
+
+            <a href="{% url 'article_list' %}"
+               class="btn btn-primary">
+
+                Məqalələrə bax
+
+            </a>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

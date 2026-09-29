@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Məqaləni sil - TechNews{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-header">
+            <h1>Məqaləni sil</h1>
+            <p>"{{ article.title }}" məqaləsini silmək istəyirsən?</p>
+        </div>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <button type="submit" class="auth-button">
+                Bəli, sil
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+            <a href="{% url 'article_list' %}">
+                Ləğv et
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

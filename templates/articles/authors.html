@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Müəlliflər - TechNews{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>Müəlliflər</h1>
+
+    <p>
+        TechNews istifadəçiləri və müəllifləri
+    </p>
+
+</div>
+
+
+<div class="authors-grid">
+
+    {% for author in authors %}
+
+        <div class="author-card">
+
+            <div class="author-avatar">
+                {{ author.username|first|upper }}
+            </div>
+
+
+            <div class="author-info">
+
+                <h3>
+                    <a href="{% url 'author_articles' author.id %}">
+                        {{ author.username }}
+                    </a>
+                </h3
+
+
+                <p>
+                    {{ author.article_count }} məqalə
+                </p>
+
+
+                {% if author.profile.role == 'admin' %}
+
+                    <span class="author-role">
+                        Admin
+                    </span>
+
+                {% else %}
+
+                    <span class="author-role">
+                        User
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <div class="empty-state">
+
+            <h2>
+                Müəllif yoxdur
+            </h2>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

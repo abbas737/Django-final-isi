@@ -1,0 +1,153 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}TechNews{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+
+        <div class="container navbar-container">
+
+            <!-- Logo -->
+            <a href="/" class="logo">
+                TechNews
+            </a>
+
+            <!-- Menu -->
+            <ul class="nav-menu">
+
+                <li>
+                    <a href="{% url 'article_list' %}">
+                        Məqalələr
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'popular' %}">
+                        Populyar
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'categories' %}">
+                        Kateqoriyalar
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'authors' %}">
+                        Müəlliflər
+                    </a>
+                </li>
+
+                {% if user.is_authenticated %}
+
+                    <li>
+                        <a href="{% url 'favorites' %}">
+                            Seçilmişlər
+                        </a>
+                    </li>
+
+                {% endif %}
+
+
+                <!-- BİZİM ADMIN PANEL -->
+                {% if user.is_authenticated and user.profile.role == 'admin' %}
+
+                    <li>
+                        <a href="{% url 'admin_dashboard' %}">
+                            Admin Panel
+                        </a>
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+
+            <!-- User menu -->
+            <div class="user-menu">
+
+                {% if user.is_authenticated %}
+
+                    <span class="username">
+                        {{ user.username }}
+                    </span>
+
+                    <a href="{% url 'article_create' %}"
+                       class="btn btn-primary">
+
+                        + Məqalə yarat
+
+                    </a>
+
+                    <a href="{% url 'logout' %}"
+                       class="btn btn-outline">
+
+                        Çıxış
+
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'login' %}"
+                       class="btn btn-outline">
+
+                        Giriş
+
+                    </a>
+
+                    <a href="{% url 'register' %}"
+                       class="btn btn-primary">
+
+                        Qeydiyyat
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Main content -->
+    <main class="main-content">
+
+        <div class="container">
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <div class="container">
+
+            <p>
+                © 2026 TechNews. Bütün hüquqlar qorunur.
+            </p>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>

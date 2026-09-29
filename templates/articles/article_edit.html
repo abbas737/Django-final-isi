@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Məqaləni redaktə et - TechNews{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-header">
+            <h1>Məqaləni redaktə et</h1>
+            <p>Məqaləndə dəyişiklik et</p>
+        </div>
+
+        <form method="post"
+              enctype="multipart/form-data"
+              class="auth-form">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_title">Başlıq</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_image">Şəkil</label>
+                {{ form.image }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_category">Kateqoriya</label>
+                {{ form.category }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_content">Məqalə</label>
+                {{ form.content }}
+            </div>
+
+            <button type="submit" class="auth-button">
+                Dəyişiklikləri göndər
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Panel - TechNews{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Admin Panel</h1>
+    <p>İstifadəçilərin və məqalələrin idarə olunması</p>
+</div>
+
+
+<!-- ========================= -->
+<!-- İSTİFADƏÇİLƏR -->
+<!-- ========================= -->
+
+<div class="admin-section">
+
+    <h2>İstifadəçilər</h2>
+
+    <div class="admin-users">
+
+        {% for account in users %}
+
+            <div class="author-card">
+
+                <div class="author-avatar">
+                    {{ account.username|first|upper }}
+                </div>
+
+                <div class="author-info">
+
+                    <h3>
+                        {{ account.username }}
+                    </h3>
+
+                    <p>
+                        {{ account.email }}
+                    </p>
+
+
+                    {% if account.profile.role == 'admin' %}
+
+                        <span class="author-role">
+                            Admin
+                        </span>
+
+                    {% else %}
+
+                        <span class="author-role">
+                            User
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if account.profile.is_blocked %}
+
+                        <p>
+                            Status: Bloklanıb
+                        </p>
+
+                    {% else %}
+
+                        <p>
+                            Status: Aktiv
+                        </p>
+
+                    {% endif %}
+
+
+                    {% if account != user %}
+
+                        <form
+                            method="post"
+                            action="{% url 'block_user' account.id %}"
+                        >
+
+                            {% csrf_token %}
+
+
+                            {% if account.profile.is_blocked %}
+
+                                <button
+                                    type="submit"
+                                    class="user-block-button user-unblock-button"
+                                >
+                                    <span class="block-icon">✓</span>
+
+                                    Blokdan çıxar
+                                </button>
+
+                            {% else %}
+
+                                <button
+                                    type="submit"
+                                    class="user-block-button user-block-danger"
+                                >
+                                    <span class="block-icon">×</span>
+
+                                    Blokla
+                                </button>
+
+                            {% endif %}
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="empty-state">
+                <h2>İstifadəçi yoxdur</h2>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- MƏQALƏLƏR -->
+<!-- ========================= -->
+
+<div class="admin-section admin-articles-section">
+
+    <div class="admin-section-header">
+
+        <div>
+            <h2>Məqalələr</h2>
+            <p>Bütün məqalələri idarə edin</p>
+        </div>
+
+        <a
+            href="{% url 'article_create' %}"
+            class="btn btn-primary"
+        >
+            + Məqalə yarat
+        </a>
+
+    </div>
+
+
+    <div class="admin-article-list">
+
+        {% for article in articles %}
+
+            <div class="admin-article-card">
+
+                {% if article.image %}
+
+                    <img
+                        src="{{ article.image.url }}"
+                        alt="{{ article.title }}"
+                        class="admin-article-image"
+                    >
+
+                {% endif %}
+
+
+                <div class="admin-article-content">
+
+                    <div class="admin-article-top">
+
+                        <span class="admin-article-category">
+                            {{ article.category.name }}
+                        </span>
+
+
+                        {% if article.status == 'published' %}
+
+                            <span class="admin-article-status published">
+                                Yayımlanıb
+                            </span>
+
+                        {% elif article.status == 'pending' %}
+
+                            <span class="admin-article-status pending">
+                                Gözləyir
+                            </span>
+
+                        {% else %}
+
+                            <span class="admin-article-status rejected">
+                                Rədd edilib
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <h3>
+                        {{ article.title }}
+                    </h3>
+
+
+                    <p class="admin-article-author">
+                        Müəllif:
+                        <strong>
+                            {{ article.author.username }}
+                        </strong>
+                    </p>
+
+
+                    <p class="admin-article-date">
+                        {{ article.created_at|date:"d.m.Y H:i" }}
+                    </p>
+
+
+                    <div class="admin-article-actions">
+
+                        <a
+                            href="{% url 'article_edit' article.id %}"
+                            class="admin-edit-button"
+                        >
+                            Redaktə et
+                        </a>
+
+
+                        <a
+                            href="{% url 'article_delete' article.id %}"
+                            class="admin-delete-button"
+                        >
+                            Sil
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="empty-state">
+                <h2>Məqalə yoxdur</h2>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
